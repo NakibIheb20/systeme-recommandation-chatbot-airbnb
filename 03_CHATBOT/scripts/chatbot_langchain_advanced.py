@@ -26,22 +26,36 @@ warnings.filterwarnings('ignore')
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
 
 try:
-    # LangChain imports
-    from langchain.llms import HuggingFacePipeline
-    from langchain.embeddings import HuggingFaceEmbeddings
-    from langchain.vectorstores import FAISS
+    # LangChain imports (versions mises à jour)
+    try:
+        from langchain_community.llms import HuggingFacePipeline
+        from langchain_community.embeddings import HuggingFaceEmbeddings
+        from langchain_community.vectorstores import FAISS
+        from langchain_community.document_loaders import DataFrameLoader
+    except ImportError:
+        # Fallback vers les anciens imports
+        from langchain.llms import HuggingFacePipeline
+        from langchain.embeddings import HuggingFaceEmbeddings
+        from langchain.vectorstores import FAISS
+        from langchain.document_loaders import DataFrameLoader
+    
     from langchain.memory import ConversationBufferMemory
     from langchain.chains import ConversationalRetrievalChain
-    from langchain.document_loaders import DataFrameLoader
     from langchain.text_splitter import RecursiveCharacterTextSplitter
     from langchain.prompts import PromptTemplate
     
     # HuggingFace imports
     from transformers import (
         AutoTokenizer, AutoModelForCausalLM,
-        pipeline, BitsAndBytesConfig
+        pipeline
     )
     import torch
+    
+    # BitsAndBytesConfig optionnel (pour quantification)
+    try:
+        from transformers import BitsAndBytesConfig
+    except ImportError:
+        BitsAndBytesConfig = None
     
     # Interface utilisateur
     import gradio as gr
